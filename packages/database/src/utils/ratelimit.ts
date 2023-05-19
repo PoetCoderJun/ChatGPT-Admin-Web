@@ -12,16 +12,18 @@ export class ModelRateLimiter extends Ratelimit {
   static async of(
     { email, model, redis = defaultRedis }: CreateModelRateLimiterParams,
   ): Promise<ModelRateLimiter | null> {
-    const userDAL = new UserDAL(redis);
-    const planDAL = new PlanDAL(redis);
+    // const userDAL = new UserDAL(redis);
+    // const planDAL = new PlanDAL(redis);
 
-    const planName = await userDAL.readPlan(email) ?? "free";
-    const planLimit = await planDAL.readProperty(planName, "limits");
-    const modelLimit = planLimit?.[model];
+    const planName = "free";
+    // const planLimit = await planDAL.readProperty(planName, "limits");
+    // const modelLimit = planLimit?.[model];
 
-    if (!modelLimit) return null;
+    // if (!modelLimit) return null;
 
-    const { limit, window } = modelLimit;
+    // const { limit, window } = modelLimit;
+    const window = '1 h'
+    const limit = 9
     return new ModelRateLimiter({
       redis,
       email,

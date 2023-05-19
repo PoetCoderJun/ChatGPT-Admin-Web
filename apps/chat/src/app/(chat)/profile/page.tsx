@@ -161,7 +161,7 @@ export default function Profile() {
             <div>{email}</div>
           </ProfileItem>
 
-          <ProfileItem
+          {/* <ProfileItem
             title={Locale.Profile.Plan.Title}
             subTitle="切换计划来升级"
           >
@@ -173,10 +173,10 @@ export default function Profile() {
                 {Locale.Profile.Upgrade}
               </button>
             </>
-          </ProfileItem>
+          </ProfileItem> */}
         </List>
 
-        {subscription && <SubscribeTable data={subscription} />}
+   {/*      {subscription && <SubscribeTable data={subscription} />}
 
         <List>
           <ProfileItem
@@ -216,7 +216,7 @@ export default function Profile() {
               {Locale.Profile.Reset.Click(resetChances ?? 0)}
             </button>
           </ProfileItem>
-        </List>
+        </List> */}
 
         {/*<List>*/}
         {/*  <ProfileItem*/}

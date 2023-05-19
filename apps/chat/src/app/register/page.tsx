@@ -10,8 +10,6 @@ import { RegisterResponse, ResponseStatus } from "@/app/api/typing.d";
 import Locales from "@/locales";
 import styles from "@/app/login/login.module.scss";
 
-const ifVerifyCode = !!process.env.NEXT_PUBLIC_EMAIL_SERVICE;
-
 export default function Register() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,8 +17,6 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [isSending, setIsSending] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
   const [invitationCode, setInvitationCode] = useState(
     searchParams.get("code") ?? ""
   );
@@ -35,8 +31,14 @@ export default function Register() {
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email || !password || !verificationCode) {
+    if (!email || !password || !invitationCode) {
       showToast(Locales.Index.NoneData);
+      setSubmitting(false);
+      return;
+    }
+
+    if (invitationCode != window.btoa(email).substring(0, 5)){
+      showToast(Locales.Index.CodeError);
       setSubmitting(false);
       return;
     }
@@ -49,9 +51,7 @@ export default function Register() {
         body: JSON.stringify({
           email: email.trim(),
           password,
-          code: verificationCode,
-          code_type: "email",
-          invitation_code: invitationCode.toLowerCase() ?? "",
+          code_type: "email"
         }),
       })
     ).json()) as RegisterResponse;
@@ -68,66 +68,11 @@ export default function Register() {
         showToast(Locales.Index.DuplicateRegistration);
         break;
       }
-      case ResponseStatus.invalidCode: {
-        showToast(Locales.Index.CodeError);
-        break;
-      }
       default: {
         showToast(Locales.UnknownError);
         break;
       }
     }
-  };
-
-  const handleSendVerification = async () => {
-    setSubmitting(true);
-
-    if (!email) {
-      showToast("请输入邮箱");
-      setSubmitting(false);
-      return;
-    }
-
-    const res = await (
-      await fetch(
-        "/api/user/register/code?email=" + encodeURIComponent(email),
-        {
-          cache: "no-store",
-          headers: { "Content-Type": "application/json" },
-        }
-      )
-    ).json();
-
-    switch (res.status) {
-      case ResponseStatus.Success: {
-        switch (res.code_data.status) {
-          case 0:
-            showToast("验证码成功发送!");
-            setIsSending(true);
-            break;
-          case 1:
-            showToast(Locales.Index.DuplicateRegistration);
-            break;
-          case 2:
-            showToast("请求验证码过快，请稍后再试!");
-            break;
-          case 4:
-          default:
-            showToast(Locales.UnknownError);
-            break;
-        }
-        break;
-      }
-      case ResponseStatus.notExist: {
-        showToast(Locales.Index.EmailNonExistent);
-        break;
-      }
-      default: {
-        showToast(Locales.UnknownError);
-        break;
-      }
-    }
-    setSubmitting(false);
   };
 
   return (
@@ -157,27 +102,6 @@ export default function Register() {
           />
         </div>
 
-        {ifVerifyCode && (
-          <div className={styles["login-form-input-group"]}>
-            <label htmlFor="email">Verification Code</label>
-            <div className={styles["verification-code-container"]}>
-              <input
-                type="text"
-                id="verification-code"
-                maxLength={6}
-                pattern="\d{6}"
-                onChange={(e) => setVerificationCode(e.target.value)}
-              />
-              <button
-                className={styles["send-verification-button"]}
-                onClick={handleSendVerification}
-                disabled={submitting}
-              >
-                {isSending ? "Already Send to Email" : "Get Code"}
-              </button>
-            </div>
-          </div>
-        )}
 
         <div className={styles["login-form-input-group"]}>
           <label htmlFor="email">Invitation Code</label>
@@ -185,7 +109,6 @@ export default function Register() {
             <input
               type="text"
               id="invitation-code"
-              placeholder="可选"
               value={invitationCode}
               onChange={(e) => setInvitationCode(e.target.value)}
             />

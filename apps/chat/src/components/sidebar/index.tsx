@@ -107,14 +107,14 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
               router.push("/profile");
             }}
           />
-          <IconButton
+          {/* <IconButton
             icon={<ShoppingIcon />}
             text="充值中心"
             className={styles["sidebar-bar-button"]}
             onClick={() => {
               router.push("/pricing");
             }}
-          />
+          /> */}
         </div>
 
         <div
@@ -134,14 +134,14 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                 <span>{rateLimit.remaining}</span>次
               </div>
             </div>
-            <div
+            {/* <div
               className={styles["sidebar-balance-button"]}
               onClick={() => {
                 router.push("/pricing");
               }}
             >
               点我充值
-            </div>
+            </div> */}
           </div>
         )}
 
