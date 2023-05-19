@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   UserDAL,
   UserLogic,
-  RegisterCodeLogic,
+  // RegisterCodeLogic,
   InvitationCodeLogic,
   AccessControlLogic,
 } from "database";
@@ -28,33 +28,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     }
 
     /* Activation verification code */
-    if (ifVerifyCode) {
-      const registerCodeLogic = new RegisterCodeLogic();
-      const success = await registerCodeLogic.activateCode(email, code.trim());
-
-      if (!success)
-        return NextResponse.json({ status: ResponseStatus.invalidCode });
-    }
 
     const user = new UserLogic();
     await user.register(email, password);
-
-    // If using an invitation code to register,
-    // then determine the type of activation code and grant corresponding rights.
-    if (invitation_code) {
-      const invitationCode = new InvitationCodeLogic();
-
-      const code = await invitationCode.acceptCode(
-        email,
-        invitation_code.toLowerCase()
-      );
-      // await user.newSubscription({
-      //   startsAt: Date.now(),
-      //   endsAt: Date.now() + 3 * 60 * 60 * 24 * 1000,
-      //   plan: "pro",
-      //   tradeOrderId: `club-code-${invitation_code.toLowerCase()}`,
-      // });
-    }
 
     // After registration, directly generate a JWT Token and return it.
     const accessControl = new AccessControlLogic();
