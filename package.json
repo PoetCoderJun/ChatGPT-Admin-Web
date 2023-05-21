@@ -7,21 +7,8 @@
     "webui"
   ],
   "homepage": "https://github.com/AprilNEA/ChatGPT-Admin-Web",
-  "bugs": {
-    "url": "https://github.com/AprilNEA/ChatGPT-Admin-Web/issues",
-    "email": "github@sku.moe"
-  },
-  "license": "MIT",
-  "author": "AprilNEA <github@sku.moe> (https://sku.moe)",
-  "contributors": [
-    "Peron <peron_ap@icloud.com> (https://github.com/PeronGH)"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AprilNEA/ChatGPT-Admin-Web"
-  },
   "workspaces": [
-    "apps/*",
+    "apps/chat/*",
     "packages/*"
   ],
   "scripts": {
