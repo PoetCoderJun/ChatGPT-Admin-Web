@@ -28,6 +28,9 @@ export class OpenAIBot extends AbstractBot {
         messages: conversation,
         max_tokens: maxTokens,
         stream: true,
+        safe_mode: true,
+        moderation: true,
+        moderation_stop: true
       }),
       signal,
     });

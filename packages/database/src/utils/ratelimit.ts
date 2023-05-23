@@ -23,7 +23,7 @@ export class ModelRateLimiter extends Ratelimit {
 
     // const { limit, window } = modelLimit;
     const window = '1 h'
-    const limit = 9
+    const limit = 10
     return new ModelRateLimiter({
       redis,
       email,
@@ -44,7 +44,7 @@ export class ModelRateLimiter extends Ratelimit {
     { redis = defaultRedis, planName, model, limit, window, email }:
       ConstructModelRateLimiterParams,
   ) {
-    const prefix = `ratelimit:${planName}:${model}`;
+    const prefix = ` :${planName}:${model}`;
 
     super({
       redis,
@@ -64,54 +64,7 @@ export class ModelRateLimiter extends Ratelimit {
   }
 
   async remaining() {
-    const script = `
-    local currentKey  = KEYS[1]           -- identifier including prefixes
-    local previousKey = KEYS[2]           -- key of the previous bucket
-    local tokens      = tonumber(ARGV[1]) -- tokens per window
-    local now         = ARGV[2]           -- current timestamp in milliseconds
-    local window      = ARGV[3]           -- interval in milliseconds
-    
-    local requestsInCurrentWindow = redis.call("GET", currentKey)
-    if requestsInCurrentWindow == false then
-      requestsInCurrentWindow = -1
-    end
-    
-    local requestsInPreviousWindow = redis.call("GET", previousKey)
-    if requestsInPreviousWindow == false then
-      requestsInPreviousWindow = 0
-    end
-    
-    local percentageInCurrent = ( now % window) / window
-    if requestsInPreviousWindow * ( 1 - percentageInCurrent ) + requestsInCurrentWindow >= tokens then
-      return -1
-    end
-    
-    return tokens - requestsInCurrentWindow
-    `;
-
-    const now = Date.now();
-
-    const currentWindow = Math.floor(now / this.#windowSize);
-    const currentKey = [this.#email, currentWindow].join(":");
-    const previousWindow = currentWindow - this.#windowSize;
-    const previousKey = [this.#email, previousWindow].join(":");
-
-    const remaining = (await this.#redis.eval(
-      script,
-      [
-        currentKey,
-        previousKey,
-      ],
-      [
-        this.#limit,
-        now,
-        this.#windowSize,
-      ],
-    )) as number;
-
-    const success = remaining >= 0;
-    const reset = (currentWindow + 1) * this.#windowSize;
-
+    const { success, pending, limit, reset, remaining } = await this.limit(this.#email);
     return {
       remaining,
       success,

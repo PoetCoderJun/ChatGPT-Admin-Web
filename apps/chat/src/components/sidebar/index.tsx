@@ -65,7 +65,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
   const notice = useNoticeStore((store) => store.notice) ?? "当前无公告";
 
-  const { data: rateLimit, isLoading: rateLimitLoading } = useLimit();
+  // const { data: rateLimit, isLoading: rateLimitLoading } = useLimit();
 
   // 暗色模式切换
   useSwitchTheme();
@@ -125,25 +125,6 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         >
           <ChatList />
         </div>
-
-        {rateLimit && (
-          <div className={styles["sidebar-balance-box"]}>
-            <div className={styles["sidebar-balance"]}>
-              <div className={styles["sidebar-balance-title"]}>当前余量</div>
-              <div className={styles["sidebar-balance-num"]}>
-                <span>{rateLimit.remaining}</span>次
-              </div>
-            </div>
-            {/* <div
-              className={styles["sidebar-balance-button"]}
-              onClick={() => {
-                router.push("/pricing");
-              }}
-            >
-              点我充值
-            </div> */}
-          </div>
-        )}
 
         <div className={styles["sidebar-tail"]}>
           <div className={styles["sidebar-actions"]}>

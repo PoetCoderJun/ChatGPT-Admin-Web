@@ -8,6 +8,7 @@ export abstract class AbstractBot implements ChatBot {
   async *answer(params: AnswerParams): AsyncIterable<string> {
     try {
       for await (const token of this.doAnswer(params)) yield token;
+      
     } catch (error) {
       if (!params.signal?.aborted) {
         console.error("[BOT]", error);
