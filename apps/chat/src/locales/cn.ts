@@ -2,7 +2,7 @@ const title = process.env.NEXT_PUBLIC_TITLE;
 
 const cn = {
   Index: {
-    Title: title || "ChatGPT Admin",
+    Title: title || "ChatGPT",
     SubTitle: "欢迎关注微信公众号：",
     Submit: "提交",
     Login: "登录",
@@ -26,7 +26,7 @@ const cn = {
   Error: {
     Unauthorized: "现在是未登录状态，请刷新浏览器缓存并登录。",
     TooManyRequests:
-      "您的账户在三小时内的使用次数已达到最大请求数，请稍后再试。\n 如果您需要更多的使用次数，可在用户信息中查看付费计划。",
+      "您的账户在每小时内的使用次数已达到最大请求数，请稍后再试。\n 如果您需要更多的使用次数，可在用户信息中查看付费计划。",
     TooFastRequests: "请求地太快啦，稍等一下（请求间隔5秒）。",
     ContentBlock: "请检查文本中的敏感词，如有误杀请联系客服。",
   },
